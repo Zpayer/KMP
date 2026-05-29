@@ -313,7 +313,7 @@ export class OperationHandler {
         this.Inctance.Data = {
             ...this.Inctance.Data,
             "UserProfileData": {
-                "IsAdmin": Token == "1.ADMIN",
+                "IsAdmin": true,
                 "UserName": (Token == "1.ADMIN" ? `<i><b>${UserName}</b></i>` : UserName) + this.SocketInstance,
                 "Gold": 9999,
                 "IsTourist": false,
