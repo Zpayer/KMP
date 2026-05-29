@@ -19,7 +19,7 @@ export function Join(Socket, ActorNr, TeamID, UserProfileData) {
         16: new Byte(4), //Region
         82: new Bool(1), //IsGamePublished
         89: new Int(TeamID), //TeamID
-        104: new String(window.location.href + "/WebSocket/Assets/"),// /kogama_assets/ https://www.kogstatic.com/kogama_assets/v96/kogama_assets_u5_webgl/
+        104: new String("https://media.githubusercontent.com/media/Zpayer/KMP/main/WebSocket/Assets/"),// /kogama_assets/ https://www.kogstatic.com/kogama_assets/v96/kogama_assets_u5_webgl/
         168: new Int(-12572), //ClientSettingFlags
         170: new Int(0), //GameType
         174: new String(window.location.href),//APIUrl - https://api-www.kgoma.com/v1/api/
