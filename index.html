@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KoGaMa Maps Previewer</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="./icon.png">
+
+  <!-- Primary meta -->
+  <meta name="description" content="Upload and preview KoGaMa world maps locally — no server required.">
+  <meta name="theme-color" content="#5865F2">
+
+  <!-- Open Graph (Discord / Facebook embeds) -->
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="KoGaMa Maps Previewer">
+  <meta property="og:description" content="Upload and preview KoGaMa world maps locally — no server required.">
+  <meta property="og:image"       content="./icon.png">
+
+  <!-- Twitter card -->
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="KoGaMa Maps Previewer">
+  <meta name="twitter:description" content="Upload and preview KoGaMa world maps locally — no server required.">
+  <meta name="twitter:image"       content="./icon.png">
+
+  <link rel="stylesheet" href="./CSS/app2.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+</head>
+
+<body>
+  <div id="iframe-container">
+    <div id="container-topper">
+      <div id="log"></div>
+      <div id="low-section">
+        <div class="select" id="mode-changer" style="display: none;">
+          <div class="change" id="backward-mode"><</div>
+          <div id="mode-display">Game Mode</div>
+          <div class="change" id="forward-mode">></div>
+        </div>
+        <button id="upload-button" class="btn">
+          Upload Map
+        </button>
+        <button id="version-button" style="display: none;" class="btn">
+          Version: 3
+        </button>
+        <button id="play-button" style="display: none;" class="btn">
+          PLAY
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="game-settings"></div>
+  <script src="./JS/UnitySetup.js"></script>
+  <script type="module" src="./JS/Hooks.js"></script>
+  <script type="module" src="./JS/WorldHandler.js"></script>
+</body>
+
+</html>
