@@ -1,8 +1,4 @@
 
-const Version = 1;
-let VersionsUUDS = [
-    "66115a33-4a8f-4096-be3c-cbf3f6105c60"
-];
 let UNITY_CLIENT_URLS = {
     //"StandalonePlayer": "//files.kogstatic.com/e0063fbe-23a3-4972-9515-5c0980ad5291/KogamaData?_t=1731590484",
     "StandaloneLauncher2": "//www-gamelauncher.kogstatic.com/www/Launcher.zip?_t=1437643276",
@@ -14,6 +10,23 @@ let UNITY_CLIENT_URLS = {
     "WebGLBuild.asm.memory.unityweb": "//webgl.kogstatic.com/4567eacb-6c16-4a12-b653-e1e471592681/Build/WebGLBuild.asm.memory.unityweb",
     "WebGLBuild.asm.framework.unityweb": "//webgl.kogstatic.com/4567eacb-6c16-4a12-b653-e1e471592681/Build/WebGLBuild.asm.framework.unityweb"
 }
+
+const builsInfos = {
+    "3.1.22.1153": {
+        Version: "3.1.22.1153",
+        ReleaseName: "2024-11-14Maintenance",
+        Branch: "2024-11-14Maintenance",
+        Buildtime: "11/14/2024 11:13:56 AM"
+    },
+    "3.1.36.1153": {
+        Version: "3.1.36.1153",
+        ReleaseName: "2025-02-26Hotfix",
+        Branch: "2025-02-26-hotfix",
+        Buildtime: "2/26/2025 12:31:44 PM"
+    }
+}
+
+
 const TypeToGameMode = {
     edit: 0,
     play: 1,
@@ -277,13 +290,13 @@ function createUnityPacket(callback) {
         "profileID": 1,
         "embedded": true,
         "gameMode": gameMode,
-        "pingURL": window.location.href + "ping.json",
+        "pingURL": window.location.href + "api/ping.json",
         "disconnectURL": "https://api-www.kgoma.com/disconnectURL",
         "unityPacketURL": "https://api-www.kgoma.com/unityPacketURL",
         "reauthURL": "https://api-www.kgoma.com/reauthURL",
         "gameRewardData": null,
         "gameRewardURL": "https://api-www.kgoma.com/v1/api/reward/game-play/",
-        "gameRewardDataURL": SPOOF_PATH + "/api/reward/game-data/",
+        "gameRewardDataURL": window.location.href + "api/game_reward.json",
         "gamePublishedURL": "https://api-www.kgoma.com/v1/api/reward/published/",
         "playerProfileURL": "https://www.kogama.com/profile",
         "eliteUpgradeURL": "https://www.kogama.com/subscription/subscribe/",
@@ -319,12 +332,7 @@ function SetUnityFunctions(ea) {
     }
     ea.UNITY_readyForAd = function () { }
     ea.UNITY_gotoDisconnectedPage = function () {
-        //alert("Booo")
-        //window.parent.document.querySelector("body > h1").textContent += "- Closed"
-        console.log(
-            '%c Go To Disconnected Page',
-            'color: white; background:rgb(204, 65, 0); padding: 5px 10px; border-radius: 5px; font-weight: bold;',
-        );
+
     }
     ea.UNITY_unityDebugException = function (e) {
         console.debug("unity exception:", e)
@@ -355,6 +363,7 @@ function SetUnityFunctions(ea) {
         var callbackId = parseUnityErrorLog(t).callbackId;
         var g = window.parent.window.InitSettings;
         if (g.token) g.ProfileID = Number(token.split(".")[0]);
+        onSendPlayerParams();
         createUnityPacket(function (ef) {
             ef.data = Object.assign(ef.data, g);
             callUnityMethod("ExternalCallback", Object.assign({ callbackId }, ef))
@@ -579,7 +588,7 @@ function initializeWebGLRuntime(e) {
             }
 
             // Load the WebGL loader script
-            const filePath = "./Game/V" + window.InitSettings.Version;
+            const filePath = "./Game/" + window.InitSettings.Version;
             loadScript(e, filePath + "/WebGLBuild.loader.js", function () {//./JS/WebGLBuild.loader.js
                 var canvasElement = e.document.getElementById("#canvas");
                 var unityConfig = {
@@ -621,10 +630,13 @@ function initializeWebGLRuntime(e) {
     };
 };
 
-window.setWebAssemblyFilesURLS = setWebAssemblyFilesURLS;
-window.initializeWebGLRuntime = initializeWebGLRuntime;
-window.InitSettings = { Version: 2 };
-window.OtherConfig = {};
+
+window.InitSettings = { Version: "3.1.22.1153" };
+let local = window.localStorage.getItem("ServerSettings");
+let ServerSettings = window.ServerSettings = local ? JSON.parse(local) : {
+    UserName: "Tourist",
+}; // ofc fake server
+
 
 let LaunchedGame = false;
 
@@ -634,56 +646,76 @@ function getFileExtension(name) {
     if (lastDot <= 0) return "";
     return name.slice(lastDot + 1);
 }
+let onSendPlayerParams = () => null;
 
-window.onload = function () {
-    const containerTopper = document.getElementById("container-topper");
+document.addEventListener("DOMContentLoaded", () => {
 
-    let modeIndex = 0;
-    let version = 3;
+    const $ = (e) => document.querySelector(e);
 
-    const Gamemodes = ["Build", "Play", "Avatar"]
-    let mode = this.document.getElementById("mode-display");
+    const ct = $("#container-topper");
+    const uploadBtn = $("#upload-button");
+    const cs = $("#control-section");
+    const dc = $("#dc");
+    const git = $("#git");
 
 
-    const uploadBtn = document.getElementById("upload-button");
-    const playBtn = document.getElementById("play-button");
-    const modeChanger = this.document.getElementById("mode-changer");
-    const versBtn = this.document.getElementById("version-button");
+    git.addEventListener("click", () => open("//github.com/Zpayer/KMP"));
+    dc.addEventListener("click", () => open("//discord.gg/jXFDNdvjZu"));
 
-    this.document.getElementById("forward-mode").onclick = async function () {
-        modeIndex++;
-        if (modeIndex > 2) modeIndex = 0;
-        window.InitSettings.gameMode = modeIndex;
-        mode.textContent = Gamemodes[modeIndex];
 
+
+    const UIHelper = window.UIHelper;
+
+
+    let container = UIHelper.createElement(cs, "div", {
+        style: {
+            display: 'none',
+            width: '90%',
+            maxWidth: '600px',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            height: '75%',
+            gap: '20px'
+        }
+    }, [
+        UIHelper.AddSelect(0, "Game Version", Object.keys(builsInfos), 0, (e) => {
+            window.InitSettings.Version = e;
+        }),
+        UIHelper.AddSelect(0, "Game Mode", ["Build", "Play", "Avatar"], 1, (_, i) => {
+            window.InitSettings.gameMode = i;
+        }),
+        UIHelper.AddTextInput(0, "PLayer Name", ServerSettings.UserName, (e) => {
+            ServerSettings.UserName = e;
+            window.localStorage.setItem("ServerSettings", JSON.stringify(ServerSettings));
+        }),
+        UIHelper.createElement(0, "div", {
+            text: "PLAY", class: "btn",
+            event_click: async () => {
+                if (LaunchedGame || !window.World) return;
+                LaunchedGame = true;
+                console.log("Lanching game...")
+                initializeUnityPlayer("iframe-container");
+                ct.style.display = "none";
+            }
+        })
+    ]);
+
+    onSendPlayerParams = function () {
+        const wrapper = UIHelper.createElement(document.body, "div", {
+            id: "loading-gear",
+        });
+        UIHelper.createElement(wrapper, "div", {
+            id: "loading-gear-inner",
+            html: UIHelper.svgs.gear,
+        });
     }
-    this.document.getElementById("backward-mode").onclick = async function () {
-        modeIndex--;
-        if (modeIndex < 0) modeIndex = 2;
-        window.InitSettings.gameMode = modeIndex;
-        mode.textContent = Gamemodes[modeIndex];
-    }
 
-    versBtn.onclick = function () {
-        version++;
-        if (version > 3) version = 1;
-        window.InitSettings.Version = version;
-        versBtn.textContent = "Version: " + version;
-    }
 
-    playBtn.onclick = async function () {
-        if (LaunchedGame || !window.World) return;
-        LaunchedGame = true;
-        console.log("Lanching game...")
-        initializeUnityPlayer("iframe-container")
-        //containerTopper.style.transform = "translateX(100%)";
-        await sleep(2e3);
-        containerTopper.style.display = "none";
-    }
-
-    uploadBtn.onclick = function () {
+    uploadBtn.addEventListener("click", function () {
         let u = document.createElement("input");
         u.type = "file";
+        u.accept = ".kgm,.kgmap";
         u.click();
         u.onchange = function () {
             const file = u.files[0];
@@ -706,12 +738,12 @@ window.onload = function () {
                     window.World = await window.WorldHandler.DecodeWorld(converted);
                 }
                 uploadBtn.style.display = "none";
-                versBtn.style.display = "";
-                playBtn.style.display = "";
-                modeChanger.style.display = "";
+                container.style.display = "flex";
+
             };
 
             reader.readAsArrayBuffer(file);
         }
-    }
-}
+    });
+});
+

@@ -1,51 +1,41 @@
+import log from "./Log.js";
 
 
 let socket = window.socket = {
     readyState: WebSocket.OPEN,
     send: ReceiveFromClient,
-    close: (e) => console.log("client wanna close ws" + e),
+    close: (e) => log.warn("Socket", "Client requested close:", e),
     _onmessage: null,
     sendMessage: function (data) {
-        console.log(data)
-        if (data instanceof Uint8Array) socket._onmessage({ data: data.buffer })
-        else if (data instanceof ArrayBuffer) socket._onmessage({ data })
+        //log.debug("Socket", "sendMessage →", data);
+        if (data instanceof Uint8Array) socket._onmessage({ data: data.buffer });
+        else if (data instanceof ArrayBuffer) socket._onmessage({ data });
     },
 };
 
+WebSocket = function () { return socket; };
 
-WebSocket = function () { return socket }
-
-
-const logger = document.querySelector("#log");
-
-const log = console.log;
-console.log = function (...args) {
-    try {
-        if (logger.isConnected) {
-            let elem = document.createElement("div");
-            args.forEach(l => {
-                if (typeof l == "string") elem.textContent += l;
-                else if (typeof l == "object") elem.textContent += JSON.stringify(l, null, 2);
-                else elem.textContent += l;
-                elem.textContent += " ";
-            })
-            logger.appendChild(elem);
-            logger.scrollTop = logger.scrollHeight;
-        }
-    } catch { }
-    log(...args);
+const oFetch = fetch; // used this cause api url was in client.
+fetch = function (url, init) {
+    //xp_level/init_data
+    if (url.includes("xp_level/init_data")) {
+        url = url.replace("xp_level/init_data/","api/xp_level.json");
+    }
+    return oFetch.call(this, url, init);
 }
 
-import OnClientReady from "../WebSocket/Handler.js"
+
+
+import OnClientReady from "../WebSocket/Handler.js";
 
 
 function InitializeClientSpoofer() {
-    console.log("Started Spoofing.", socket)
+    log.info("Spoofer", "Started spoofing.", socket);
     OnClientReady(socket);
 }
 
 function ReceiveFromClient(data) {
-    console.log(data)
+    log.debug("Client→Server", data);
 }
 
 Object.defineProperty(socket, "onmessage", {
@@ -57,4 +47,3 @@ Object.defineProperty(socket, "onmessage", {
         InitializeClientSpoofer();
     }
 });
-

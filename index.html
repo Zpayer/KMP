@@ -6,24 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>KoGaMa Maps Previewer</title>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="./icon.png">
+  <link rel="icon" type="image/png" href="./icon.svg">
 
-  <!-- Primary meta -->
-  <meta name="description" content="Upload and preview KoGaMa world maps locally — no server required.">
+  <meta name="description" content="Upload and preview KoGaMa world maps.">
   <meta name="theme-color" content="#5865F2">
 
-  <!-- Open Graph (Discord / Facebook embeds) -->
-  <meta property="og:type"        content="website">
-  <meta property="og:title"       content="KoGaMa Maps Previewer">
-  <meta property="og:description" content="Upload and preview KoGaMa world maps locally — no server required.">
-  <meta property="og:image"       content="./icon.png">
-
-  <!-- Twitter card -->
-  <meta name="twitter:card"        content="summary">
-  <meta name="twitter:title"       content="KoGaMa Maps Previewer">
-  <meta name="twitter:description" content="Upload and preview KoGaMa world maps locally — no server required.">
-  <meta name="twitter:image"       content="./icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="KoGaMa Maps Previewer (by: Zpayer)">
+  <meta property="og:description" content="Upload and preview KoGaMa world maps.">
+  <meta property="og:image" content="./icon.png">
 
   <link rel="stylesheet" href="./CSS/app2.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
@@ -32,29 +23,41 @@
 <body>
   <div id="iframe-container">
     <div id="container-topper">
-      <div id="log"></div>
-      <div id="low-section">
-        <div class="select" id="mode-changer" style="display: none;">
-          <div class="change" id="backward-mode"><</div>
-          <div id="mode-display">Game Mode</div>
-          <div class="change" id="forward-mode">></div>
-        </div>
+      <div id="control-section">
         <button id="upload-button" class="btn">
           Upload Map
-        </button>
-        <button id="version-button" style="display: none;" class="btn">
-          Version: 3
-        </button>
-        <button id="play-button" style="display: none;" class="btn">
-          PLAY
         </button>
       </div>
     </div>
   </div>
-  <div id="game-settings"></div>
+  <script src="./JS/UIHelper.js"></script>
   <script src="./JS/UnitySetup.js"></script>
   <script type="module" src="./JS/Hooks.js"></script>
   <script type="module" src="./JS/WorldHandler.js"></script>
+  <div
+    style="color: #ffffff6b; display: flex; align-items: center; gap: 20px;position: absolute; bottom: 10px;left: 10px;">
+    <div id="git" class="transition" style="cursor: pointer;">
+      <svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-mark-github"
+        viewBox="0 0 24 24" width="32" height="32" fill="currentColor" display="inline-block" overflow="visible"
+        style="vertical-align:text-bottom">
+        <path
+          d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943">
+        </path>
+      </svg>
+    </div>
+    <div id="dc" class="transition" style="cursor: pointer;">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32"
+        viewBox="0 -50 256 256" version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid">
+        <g>
+          <path
+            d="M216.856339,16.5966031 C200.285002,8.84328665 182.566144,3.2084988 164.041564,0 C161.766523,4.11318106 159.108624,9.64549908 157.276099,14.0464379 C137.583995,11.0849896 118.072967,11.0849896 98.7430163,14.0464379 C96.9108417,9.64549908 94.1925838,4.11318106 91.8971895,0 C73.3526068,3.2084988 55.6133949,8.86399117 39.0420583,16.6376612 C5.61752293,67.146514 -3.4433191,116.400813 1.08711069,164.955721 C23.2560196,181.510915 44.7403634,191.567697 65.8621325,198.148576 C71.0772151,190.971126 75.7283628,183.341335 79.7352139,175.300261 C72.104019,172.400575 64.7949724,168.822202 57.8887866,164.667963 C59.7209612,163.310589 61.5131304,161.891452 63.2445898,160.431257 C105.36741,180.133187 151.134928,180.133187 192.754523,160.431257 C194.506336,161.891452 196.298154,163.310589 198.110326,164.667963 C191.183787,168.842556 183.854737,172.420929 176.223542,175.320965 C180.230393,183.341335 184.861538,190.991831 190.096624,198.16893 C211.238746,191.588051 232.743023,181.531619 254.911949,164.955721 C260.227747,108.668201 245.831087,59.8662432 216.856339,16.5966031 Z M85.4738752,135.09489 C72.8290281,135.09489 62.4592217,123.290155 62.4592217,108.914901 C62.4592217,94.5396472 72.607595,82.7145587 85.4738752,82.7145587 C98.3405064,82.7145587 108.709962,94.5189427 108.488529,108.914901 C108.508531,123.290155 98.3405064,135.09489 85.4738752,135.09489 Z M170.525237,135.09489 C157.88039,135.09489 147.510584,123.290155 147.510584,108.914901 C147.510584,94.5396472 157.658606,82.7145587 170.525237,82.7145587 C183.391518,82.7145587 193.761324,94.5189427 193.539891,108.914901 C193.539891,123.290155 183.391518,135.09489 170.525237,135.09489 Z"
+            fill="curretnColor" fill-rule="nonzero">
+
+          </path>
+        </g>
+      </svg>
+      </a>
+    </div>
 </body>
 
 </html>

@@ -1,0 +1,280 @@
+{
+    "Level": 45,
+    "XP": 0,
+    "XPLevelLimits": {
+        "PrevXP": 0,
+        "NextXP": 1000000000,
+        "Level": 100
+    },
+    "BadgeUrlData": [
+        {
+            "Level": 100,
+            "URL": "/Levels/Level100.jpg",
+            "FriendsLimit": 1000
+        },
+        {
+            "Level": 45,
+            "URL": "/Levels/Level45.jpg",
+            "FriendsLimit": 430
+        },
+        {
+            "Level": 44,
+            "URL": "/Levels/Level44.jpg",
+            "FriendsLimit": 425
+        },
+        {
+            "Level": 43,
+            "URL": "/Levels/Level43.jpg",
+            "FriendsLimit": 425
+        },
+        {
+            "Level": 42,
+            "URL": "/Levels/Level42.jpg",
+            "FriendsLimit": 420
+        },
+        {
+            "Level": 41,
+            "URL": "/Levels/Level41.jpg",
+            "FriendsLimit": 420
+        },
+        {
+            "Level": 40,
+            "URL": "/Levels/Level40.jpg",
+            "FriendsLimit": 420
+        },
+        {
+            "Level": 39,
+            "URL": "/Levels/Level39.jpg",
+            "FriendsLimit": 415
+        },
+        {
+            "Level": 38,
+            "URL": "/Levels/Level38.jpg",
+            "FriendsLimit": 415
+        },
+        {
+            "Level": 37,
+            "URL": "/Levels/Level37.jpg",
+            "FriendsLimit": 415
+        },
+        {
+            "Level": 36,
+            "URL": "/Levels/Level36.jpg",
+            "FriendsLimit": 410
+        },
+        {
+            "Level": 35,
+            "URL": "/Levels/Level35.jpg",
+            "FriendsLimit": 410
+        },
+        {
+            "Level": 34,
+            "URL": "/Levels/Level34.jpg",
+            "FriendsLimit": 410
+        },
+        {
+            "Level": 33,
+            "URL": "/Levels/Level33.jpg",
+            "FriendsLimit": 405
+        },
+        {
+            "Level": 32,
+            "URL": "/Levels/Level32.jpg",
+            "FriendsLimit": 405
+        },
+        {
+            "Level": 31,
+            "URL": "/Levels/Level31.jpg",
+            "FriendsLimit": 405
+        },
+        {
+            "Level": 30,
+            "URL": "/Levels/Level30.jpg",
+            "FriendsLimit": 400
+        },
+        {
+            "Level": 29,
+            "URL": "/Levels/Level29.jpg",
+            "FriendsLimit": 380
+        },
+        {
+            "Level": 28,
+            "URL": "/Levels/Level28.jpg",
+            "FriendsLimit": 370
+        },
+        {
+            "Level": 27,
+            "URL": "/Levels/Level27.jpg",
+            "FriendsLimit": 360
+        },
+        {
+            "Level": 26,
+            "URL": "/Levels/Level26.jpg",
+            "FriendsLimit": 360
+        },
+        {
+            "Level": 25,
+            "URL": "/Levels/Level25.jpg",
+            "FriendsLimit": 350
+        },
+        {
+            "Level": 24,
+            "URL": "/Levels/Level24.jpg",
+            "FriendsLimit": 350
+        },
+        {
+            "Level": 23,
+            "URL": "/Levels/Level23.jpg",
+            "FriendsLimit": 330
+        },
+        {
+            "Level": 22,
+            "URL": "/Levels/Level22.jpg",
+            "FriendsLimit": 320
+        },
+        {
+            "Level": 21,
+            "URL": "/Levels/Level21.jpg",
+            "FriendsLimit": 320
+        },
+        {
+            "Level": 20,
+            "URL": "/Levels/Level20.jpg",
+            "FriendsLimit": 300
+        },
+        {
+            "Level": 19,
+            "URL": "/Levels/Level19.jpg",
+            "FriendsLimit": 290
+        },
+        {
+            "Level": 18,
+            "URL": "/Levels/Level18.jpg",
+            "FriendsLimit": 290
+        },
+        {
+            "Level": 17,
+            "URL": "/Levels/Level17.jpg",
+            "FriendsLimit": 280
+        },
+        {
+            "Level": 16,
+            "URL": "/Levels/Level16.jpg",
+            "FriendsLimit": 270
+        },
+        {
+            "Level": 15,
+            "URL": "/Levels/Level15.jpg",
+            "FriendsLimit": 250
+        },
+        {
+            "Level": 14,
+            "URL": "/Levels/Level14.jpg",
+            "FriendsLimit": 230
+        },
+        {
+            "Level": 13,
+            "URL": "/Levels/Level13.jpg",
+            "FriendsLimit": 220
+        },
+        {
+            "Level": 12,
+            "URL": "/Levels/Level12.jpg",
+            "FriendsLimit": 200
+        },
+        {
+            "Level": 11,
+            "URL": "/Levels/Level11.jpg",
+            "FriendsLimit": 180
+        },
+        {
+            "Level": 10,
+            "URL": "/Levels/Level10.jpg",
+            "FriendsLimit": 170
+        },
+        {
+            "Level": 9,
+            "URL": "/Levels/Level9.jpg",
+            "FriendsLimit": 150
+        },
+        {
+            "Level": 8,
+            "URL": "/Levels/Level8.jpg",
+            "FriendsLimit": 140
+        },
+        {
+            "Level": 7,
+            "URL": "/Levels/Level7.jpg",
+            "FriendsLimit": 120
+        },
+        {
+            "Level": 6,
+            "URL": "/Levels/Level6.jpg",
+            "FriendsLimit": 110
+        },
+        {
+            "Level": 5,
+            "URL": "/Levels/Level5.jpg",
+            "FriendsLimit": 90
+        },
+        {
+            "Level": 4,
+            "URL": "/Levels/Level4.jpg",
+            "FriendsLimit": 80
+        },
+        {
+            "Level": 3,
+            "URL": "/Levels/Level3.jpg",
+            "FriendsLimit": 60
+        },
+        {
+            "Level": 2,
+            "URL": "/Levels/Level2.jpg",
+            "FriendsLimit": 40
+        },
+        {
+            "Level": 1,
+            "URL": "/Levels/Level1.jpg",
+            "FriendsLimit": 30
+        }
+    ],
+    "XPManagerData": {
+        "RewardedAd": {
+            "XPId": 25,
+            "XPAmount": 100
+        },
+        "HugeFirstTimeReward": {
+            "XPId": 24,
+            "XPAmount": 100
+        },
+        "MediumFirstTimeReward": {
+            "XPId": 23,
+            "XPAmount": 10
+        },
+        "SmallFirstTimeReward": {
+            "XPId": 22,
+            "XPAmount": 15
+        },
+        "AvatarEditModeRepeatPlayTime": {
+            "XPId": 21,
+            "XPAmount": 10
+        },
+        "EditModeRepeatPlayTime": {
+            "XPId": 20,
+            "XPAmount": 10
+        },
+        "PlayModeRepeatPlayTime": {
+            "XPId": 19,
+            "XPAmount": 10
+        },
+        "PLAY_NEW_GAME_REWARD": {
+            "XPId": 16,
+            "XPAmount": 60
+        },
+        "GAME_LIKES": {
+            "XPId": 13,
+            "XPAmount": 5
+        }
+    },
+    "MinPlayersActivateXP": 5
+}

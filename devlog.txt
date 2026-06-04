@@ -1,0 +1,12 @@
+
+______________________________________6/4/2026
+
+-Maps with classes can load now. (if there is only classes no spawn give up buddy 🥀)
+-Fixed .kgmap reading.
+-Fixed picking stars.
+-Added saving game settings to localStorage.
+-Fixed Levels Rendering.
+-Gave player level 45.
+-Fixed avatar body bugs. (maybe idk)
+-Fixed Vehicles.
+

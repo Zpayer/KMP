@@ -1,50 +1,55 @@
-
 import { Deserialize, GetKeyFromValue } from "../ExitGames.Client.Photon/Protocol16Helper.js";
 import { OperationHandler, InternalOperationRequestsHandler } from "./Operations.js";
 import MVCommon from "./MVCommon.js";
 const { MVOperationCodes } = MVCommon;
+import log from "../JS/Log.js";
+
+// Operations that fire every frame — skip verbose logging for these
+const SILENT_OPS = new Set([
+    "UnregisterWorldObject",
+    "Join",
+    "UpdateWorldObject",
+    "UpdateWorldObjectRunTimeData",
+    "UpdateLineOfFire",
+    "UpdatePrototype",
+    "SetSayChatBubbleVisible",
+]);
 
 let ActorNumber = 0;
-
 
 function OnClientReady(socket) {
     ActorNumber++;
 
-    let ws = {
-        send: socket.sendMessage,
-    }
+    let ws = { send: socket.sendMessage };
 
     ws.send(new Uint8Array([243, 1, 0]));
+
     const OpHandler = new OperationHandler(ws, ActorNumber);
     const InternalOpRHandler = new InternalOperationRequestsHandler(ws, ActorNumber);
+    InternalOpRHandler.OpHandler = OpHandler;
 
     socket.close = () => {
         OpHandler.HandleClosing();
     };
+
     socket.send = (e) => {
-        let { MagicNumber, EgMessageType, Data } = Deserialize(new Uint8Array(e));
+        let { EgMessageType, Data } = Deserialize(new Uint8Array(e));
         let { Parameters, OperationCode } = Data;
-        console.log(Data)
         let OperationName = GetKeyFromValue(MVOperationCodes, OperationCode);
 
-        if (!`UnregisterWorldObject
-            Join
-            UpdateWorldObject
-            UpdateWorldObjectRunTimeData
-            UpdateLineOfFire
-            UpdatePrototype
-            SetSayChatBubbleVisible
-            `.includes(OperationName)) console.log(EgMessageType, OperationName, Parameters);
+        //if (!SILENT_OPS.has(OperationName)) {
+        //    log.debug("Handler", `${EgMessageType} → ${OperationName}`, Parameters);
+        //}
 
         try {
             if (EgMessageType == "InternalOperationRequest") InternalOpRHandler[OperationName](Parameters);
             else OpHandler[OperationName](Parameters);
         } catch (error) {
-            console.log(error)
+            log.error("Handler", `Failed to handle ${OperationName}:`, error);
         }
     };
 
-    console.log("Initialized Fake WebSocket Server.");
+    log.success("Handler", "Fake WebSocket server initialized.");
 }
 
 export default OnClientReady;

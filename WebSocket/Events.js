@@ -1,15 +1,11 @@
 import { Int, Null, String, TArray, Dictionary, Bool, Byte, Float, ByteArray } from "../ExitGames.Client.Photon/Protocol16Classes.js";
-import { Serialize, GetKeyFromValue } from "../ExitGames.Client.Photon/Protocol16Helper.js";
+import { Serialize } from "../ExitGames.Client.Photon/Protocol16Helper.js";
 import MVCommon from "./MVCommon.js";
 const { MVEventCodes, MVOperationCodes, DBQueryKeys } = MVCommon;
 
 import Materials from "./Assets/Materials.js";
-//import TextLog from "./Log/text.js";
-//const sleep = (e) => new Promise((resolve) => setTimeout(resolve, e));
 
 const MagicNumber = 243;
-
-
 
 
 export function Join(Socket, ActorNr, TeamID, UserProfileData) {
@@ -19,10 +15,10 @@ export function Join(Socket, ActorNr, TeamID, UserProfileData) {
         16: new Byte(4), //Region
         82: new Bool(1), //IsGamePublished
         89: new Int(TeamID), //TeamID
-        104: new String(window.location.href + "/WebSocket/Assets/"),// /kogama_assets/ https://www.kogstatic.com/kogama_assets/v96/kogama_assets_u5_webgl/
+        104: new String(window.location.href.includes("github") ? ("https://media.githubusercontent.com/media/Zpayer/KMP/main/") : window.location.href + "WebSocket/Assets/"),
         168: new Int(-12572), //ClientSettingFlags
         170: new Int(0), //GameType
-        174: new String(window.location.href),//APIUrl - https://api-www.kgoma.com/v1/api/
+        174: new String(window.location.href), //APIUrl
         177: new String("UwYEtrSfoxNXUFISeIJgjoUKMmXtDRQo3wCjjb3+z0GsR6wN14GH2fFxJ1f6cYPcief5U8W4yhVkfwHHeu2LD+IBY96woi1d4VLln23eeSg="), //Format
         181: new Int(4), //MarketPlaceLevel
         182: new Dictionary([ //Prices
@@ -31,14 +27,14 @@ export function Join(Socket, ActorNr, TeamID, UserProfileData) {
             { Key: new String("ModelMarketplace"), Value: new TArray([new Int(40)], 105) }
         ], 0, 0),
         184: new Int(3), //PublishLevel 3 -> published
-        186: new String("/kogama_assets/"),//AssetBundleRootUrlDefault
+        186: new String("/kogama_assets/"), //AssetBundleRootUrlDefault
         212: new Bool(ThemesEnabled), //ThemesEnabled
         215: new Int(300), //PostGameInterstitialIntervalInSeconds
         224: new String(JSON.stringify(UserProfileData)),
-        225: new String("https://kogama.com/profile/{0}/can_consent/"),//AdConsentEndpointURL
-        226: new String("https://kogama.com/"),//KogamaMainpageURL
+        225: new String("https://kogama.com/profile/{0}/can_consent/"), //AdConsentEndpointURL
+        226: new String("https://kogama.com/"), //KogamaMainpageURL
         228: new Int(0), //TouristPromotionCreyFrequencyPercent
-        229: new String("https://www.playcrey.com/campaign/kogama?utm_source=Kogama&utm_medium=Second-Phase"),//TouristPromotionCreyURL
+        229: new String("https://www.playcrey.com/campaign/kogama?utm_source=Kogama&utm_medium=Second-Phase"), //TouristPromotionCreyURL
         230: new Bool(1), //TouristPromotionCreyRedirectUser
         231: new Bool(0), //ElitePromotionEnabled
         232: new Int(240), //ElitePromotionInterval
@@ -50,8 +46,8 @@ export function Join(Socket, ActorNr, TeamID, UserProfileData) {
         238: new Int(30), //InterstitialTimeoutAfterRewardedAdWebGL
         239: new Int(30), //InterstitialTimeoutAfterRewardedAdAndroid
         240: new Bool(0), //CustomTouristPromotionRedirectToURL
-        241: new String("https://google.com"),//CustomTouristPromotionURL
-        242: new String("Promotion/Promotion_01.png"),//CustomTouristPromotionAssetURL
+        241: new String("https://google.com"), //CustomTouristPromotionURL
+        242: new String("Promotion/Promotion_01.png"), //CustomTouristPromotionAssetURL
         243: new Int(0), //CustomTouristPromotionFrequencyPercent
         254: new Int(ActorNr),
     };
@@ -101,13 +97,9 @@ export function RequestMaterials(Socket) {
             "AvatarModifierPackageType": (_) => new Int(_),
             "MaterialAnimatorTypeName": (_) => new String(_),
             "MaterialUnlockPrice": (_) => new Int(_),
-            "MaterialPhysicalProperties": (_) => {
-                //console.log(_.map(x=>new Float(x)))
-                //no 
-                return new TArray(_.map(x => new Float(x)), 102)
-            },
+            "MaterialPhysicalProperties": (_) => new TArray(_.map(x => new Float(x)), 102),
             "MaterialUnlocked": (_) => new Bool(_),
-        }
+        };
         let Val = [];
         Object.values(Materials).forEach(val => {
             let Key = new Byte(val.MaterialID);
@@ -118,9 +110,8 @@ export function RequestMaterials(Socket) {
                 Values.push({ Key, Value });
             });
             Val.push({ Key, Value: new Dictionary(Values) });
-            //console.log(Values);
         });
-        let packet = {
+        Socket.send(Serialize({
             MagicNumber,
             EgMessageType: "Event",
             Data: {
@@ -129,9 +120,7 @@ export function RequestMaterials(Socket) {
                     "93": new Dictionary(Val),
                 },
             }
-        }
-        let data = Serialize(packet)
-        Socket.send(data);
+        }));
     } catch (e) {
         console.error(e);
     }
@@ -156,7 +145,7 @@ export function UpdateWorldObject(Socket, ActorNr, WorldObjectID, Timestamp, Pos
     }));
 }
 export function GetSubscriptionPerksData(Socket) {
-    let data = Serialize({
+    Socket.send(Serialize({
         MagicNumber,
         EgMessageType: "Event",
         Data: {
@@ -165,12 +154,11 @@ export function GetSubscriptionPerksData(Socket) {
                 "245": new Int(50),
             },
         }
-    })
-    Socket.send(data);
+    }));
 }
 export function GetKogamaVat(Socket) {
-    let vat = { "regularUserVat": 0.9, "subscribedUserVat": 0.3 }
-    let data = Serialize({
+    let vat = { "regularUserVat": 0.9, "subscribedUserVat": 0.3 };
+    Socket.send(Serialize({
         MagicNumber,
         EgMessageType: "Event",
         Data: {
@@ -179,10 +167,9 @@ export function GetKogamaVat(Socket) {
                 "245": new String(JSON.stringify(vat)),
             },
         }
-    })
-    Socket.send(data);
+    }));
 }
-export function GetProfileMetaData(Socket) {
+export function GetProfileMetaData(Socket, ProfileSettingsData) {
     let dat = {
         "FirstTimeState": {
             "ByteArray": "AIACAwAAAEAALgwAAAAAAOgWZn9g"
@@ -196,38 +183,10 @@ export function GetProfileMetaData(Socket) {
             }
         },
         "ProfileSettingsState": {
-            "ProfileSettingsData": {
-                "Standalone": {
-                    "MouseSensitivity": 50.5,
-                    "TargetFrameRate": 4,
-                    "TextureQuality": 1,
-                    "TextureFilter": 2,
-                    "AnistropicFiltering": 5,
-                    "AntiAliasing": 2,
-                    "LightQuality": 2
-                },
-                "WebGL": {
-                    "MouseSensitivity": 50.5,
-                    "TargetFrameRate": 4,
-                    "TextureQuality": 1,
-                    "TextureFilter": 1,
-                    "AnistropicFiltering": 4,
-                    "AntiAliasing": 1,
-                    "LightQuality": 1
-                },
-                "Touch": {
-                    "MouseSensitivity": 50.5,
-                    "TargetFrameRate": 4,
-                    "TextureQuality": 1,
-                    "TextureFilter": 1,
-                    "AnistropicFiltering": 3,
-                    "AntiAliasing": 0,
-                    "LightQuality": 0
-                }
-            }
+            ProfileSettingsData
         }
-    }
-    let data = Serialize({
+    };
+    Socket.send(Serialize({
         MagicNumber,
         EgMessageType: "Event",
         Data: {
@@ -239,37 +198,23 @@ export function GetProfileMetaData(Socket) {
                 "196": new Bool(false),
             },
         }
-    })
-    Socket.send(data);
+    }));
 }
 export function PlayerPlanetData(Socket, ActorNr, Data) {
-    let data = Serialize({
+    Socket.send(Serialize({
         MagicNumber,
         EgMessageType: "Event",
         Data: {
             Code: MVEventCodes.PlayerPlanetData,
             Parameters: {
-                "245": new String(JSON.stringify(Data)), /* {
-                    "highScoreGamePoints": 0,
-                    "rank": 0,
-                    "progressionGamePoints": 30,
-                    "playtime": "00:00:00",
-                    "gamePassTier": 0,
-                    "playerPlanetMetaData": {
-                        "gamePassTierSeen": 0,
-                        "welcomeRewardClaimed": false,
-                        "lastDailyWelcomeRewardClaim": "0001-01-01T00:00:00"
-                    },
-                    "previewGamePassTier": 0
-                }*/
+                "245": new String(JSON.stringify(Data)),
                 "254": new Int(ActorNr),
             },
         }
-    })
-    Socket.send(data);
+    }));
 }
 export function GetPublishedPlanetProfileData(Socket) {
-    let data = Serialize({
+    Socket.send(Serialize({
         MagicNumber,
         EgMessageType: "Event",
         Data: {
@@ -281,11 +226,10 @@ export function GetPublishedPlanetProfileData(Socket) {
                 })),
             },
         }
-    })
-    Socket.send(data);
+    }));
 }
 export function SetActorReady(Socket, Bool_, ActorNr) {
-    let data = Serialize({
+    Socket.send(Serialize({
         MagicNumber,
         EgMessageType: "Event",
         Data: {
@@ -295,8 +239,27 @@ export function SetActorReady(Socket, Bool_, ActorNr) {
                 208: new Bool(Bool_)
             },
         }
-    })
-    Socket.send(data);
+    }));
+}
+export function SetActiveSpawnRole(Socket, Id, ActorNr, [PosX, PosY, PosZ], [RotX, RotY, RotZ, RotW]) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.SetActiveSpawnRole,
+            Parameters: {
+                254: new Int(ActorNr),
+                191: new Int(Id),
+                24: new Float(PosX),
+                25: new Float(PosY),
+                26: new Float(PosZ),
+                27: new Float(RotX),
+                28: new Float(RotY),
+                29: new Float(RotZ),
+                30: new Float(RotW),
+            },
+        }
+    }));
 }
 export function SetupUserPlayMode(Socket, Teams, UsersList, UserIndex, Timestamp, GameStateSettings) {
     let TeamsDict = new Dictionary();
@@ -308,7 +271,7 @@ export function SetupUserPlayMode(Socket, Teams, UsersList, UserIndex, Timestamp
                 { Key: new Byte(0), Value: new Bool(team.Enabeled) },
             ])
         });
-    })
+    });
     UsersList.forEach((user) => {
         UsersDict.Value.push({
             Key: new Int(user.ActorNr),
@@ -326,8 +289,8 @@ export function SetupUserPlayMode(Socket, Teams, UsersList, UserIndex, Timestamp
             ])
         });
     });
-    let { GameStateType, GameStateDuration, GameStateStartTime } = GameStateSettings;
-    let data = Serialize({
+    let { GameStateType, GameStateDuration, GameStateStartTime, GameStatCounterData } = GameStateSettings;
+    Socket.send(Serialize({
         MagicNumber,
         EgMessageType: "Event",
         Data: {
@@ -335,7 +298,7 @@ export function SetupUserPlayMode(Socket, Teams, UsersList, UserIndex, Timestamp
             Parameters: {
                 "245": new String(JSON.stringify(User.Data)),
                 "207": new String(JSON.stringify({ "spawnRolesDefaultTypeWoIDMap": { "DefaultPlayModeSpawnRole": User.Data.activeSpawnRole } })),
-                "158": new ByteArray([0, 0, 0, 0]), //GameStatCounterData
+                "158": new ByteArray(GameStatCounterData), //GameStatCounterData
                 "35": new Int(Timestamp), //Timestamp
                 "65": new Int(GameStateType), //GameStateType
                 "66": new Int(GameStateDuration), //GameStateDuration
@@ -345,14 +308,62 @@ export function SetupUserPlayMode(Socket, Teams, UsersList, UserIndex, Timestamp
                 "13": UsersDict,
             },
         }
-    })
-    Socket.send(data);
+    }));
+}
+export function SetupUserBuildMode(Socket, Teams, UsersList, UserIndex, Timestamp, GameStateSettings) {
+    let TeamsDict = new Dictionary();
+    let UsersDict = new Dictionary();
+    let User = UsersList[UserIndex];
+    Teams.forEach((team) => {
+        TeamsDict.Value.push({
+            Key: new Int(team.Id), Value: new Dictionary([
+                { Key: new Byte(0), Value: new Bool(team.Enabeled) },
+            ])
+        });
+    });
+    UsersList.forEach((user) => {
+        UsersDict.Value.push({
+            Key: new Int(user.ActorNr),
+            Value: new Dictionary([
+                { Key: new Byte(11), Value: new Int(user.ProfileID) },
+                { Key: new Byte(68), Value: new Byte(user.AvatarStatus) },
+                { Key: new Byte(89), Value: new Int(user.TeamID) },
+                { Key: new Byte(154), Value: new String(user.RegionCode) },
+                { Key: new Byte(169), Value: new Int(user.Level) },
+                { Key: new Byte(188), Value: new Byte(user.ClientBuildTarget) },
+                { Key: new Byte(210), Value: new Bool(user.IsActorReady) },
+                { Key: new Byte(223), Value: new String(JSON.stringify(user.PlayerPlanetData)) },
+                { Key: new Byte(224), Value: new String(JSON.stringify(user.UserProfileData)) },
+                { Key: new Byte(245), Value: new String(JSON.stringify(user.Data)) },
+            ])
+        });
+    });
+    let { GameStateType, GameStateDuration, GameStateStartTime, GameStatCounterData } = GameStateSettings;
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.SetupUserBuildMode,
+            Parameters: {
+                "245": new String(JSON.stringify(User.Data)),
+                "207": new String(JSON.stringify({ "spawnRolesDefaultTypeWoIDMap": { "DefaultPlayModeSpawnRole": User.Data.activeSpawnRole } })),
+                "158": new ByteArray(GameStatCounterData), //GameStatCounterData
+                "35": new Int(Timestamp), //Timestamp
+                "65": new Int(GameStateType), //GameStateType
+                "66": new Int(GameStateDuration), //GameStateDuration
+                "67": new Int(GameStateStartTime), //GameStateStartTime
+                "191": new Int(User.Data.activeSpawnRole + 1), //Id
+                "90": TeamsDict,
+                "13": UsersDict,
+            },
+        }
+    }));
 }
 export async function GameSnapshotData(Socket, Data, callback) {
     for (var i = 0; i < Data.length / 5e3; i++) {
         let arr = Data.slice(i * 5e3, (i + 1) * 5e3);
         let BytesLeft = arr.length >= 5000;
-        let data = Serialize({
+        Socket.send(Serialize({
             MagicNumber,
             EgMessageType: "Event",
             Data: {
@@ -363,21 +374,19 @@ export async function GameSnapshotData(Socket, Data, callback) {
                     "100": new Bool(BytesLeft)
                 },
             }
-        })
-        Socket.send(data);
-        if (!BytesLeft) callback()
+        }));
+        if (!BytesLeft) callback();
     }
 }
 export function LogicFrame(Socket) {
-    let data = Serialize({
+    Socket.send(Serialize({
         MagicNumber,
         EgMessageType: "Event",
         Data: {
             Code: MVEventCodes.LogicFrame,
             Parameters: {},
         }
-    })
-    Socket.send(data);
+    }));
 }
 export function UpdateWorldObjectDataPartial(Socket, ActorNr, WorldObjectID, WorldObjectData) {
     Socket.send(Serialize({
@@ -387,7 +396,7 @@ export function UpdateWorldObjectDataPartial(Socket, ActorNr, WorldObjectID, Wor
             Code: MVEventCodes.UpdateWorldObjectDataPartial,
             Parameters: {
                 "18": new Dictionary(WorldObjectData),
-                "22": new Int(WorldObjectID), //QueryId
+                "22": new Int(WorldObjectID),
                 "254": new Int(ActorNr),
             },
         }
@@ -396,11 +405,11 @@ export function UpdateWorldObjectDataPartial(Socket, ActorNr, WorldObjectID, Wor
 
 let LastId = 4;
 export function PendingByteDataBatch(Socket, ActorNr, QueryType, Data, callback) {
-    callback ??= _ => 0
+    callback ??= _ => 0;
     for (var i = 0; i < Data.length / 5e3; i++) {
         let arr = Data.slice(i * 5e3, (i + 1) * 5e3);
         let BytesLeft = arr.length >= 5000;
-        let data = Serialize({
+        Socket.send(Serialize({
             MagicNumber,
             EgMessageType: "Event",
             Data: {
@@ -413,8 +422,7 @@ export function PendingByteDataBatch(Socket, ActorNr, QueryType, Data, callback)
                     "254": new Int(ActorNr),
                 },
             }
-        })
-        Socket.send(data);
+        }));
         if (!BytesLeft) {
             LastId++;
             callback();
@@ -485,6 +493,50 @@ export function SetTeam(Socket, ActorNr, TeamID) {
             Code: MVEventCodes.SetTeam,
             Parameters: {
                 "89": new Int(TeamID),
+                "254": new Int(ActorNr),
+            },
+        }
+    }));
+}
+
+
+export function UpdateGameStat(Socket, ActorNr, TeamID, StatCounterType, GameStatValue, GameStatOtherID, GameStatUpdateTeamScore, GameStatIncrement) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.UpdateGameStat,
+            Parameters: {
+                254: new Int(ActorNr),
+                89: new Int(TeamID),
+
+                159: new Byte(StatCounterType),
+                160: new Int(GameStatValue),
+                161: new Int(GameStatOtherID),
+                162: new Bool(GameStatUpdateTeamScore),
+                163: new Bool(GameStatIncrement),
+            },
+        }
+    }));
+}
+export function PostWinnerReport(Socket) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.PostWinnerReport,
+            Parameters: {},
+        }
+    }));
+}
+export function CollectiblePickedUp(Socket, WorldObjectID, ActorNr) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.CollectiblePickedUp,
+            Parameters: {
+                "22": new Int(WorldObjectID),
                 "254": new Int(ActorNr),
             },
         }
@@ -616,6 +668,224 @@ export function LogicFastForward(Socket, Timestamp) {
             Code: MVEventCodes.LogicFastForward,
             Parameters: {
                 "35": new Int(Timestamp),
+            },
+        }
+    }));
+}
+
+export function SpawnVehicleWithDriver(Socket, ActorNr, SpawnerWorldObjectID, VehicleWorldObjectID, DriverWorldObjectID, Timestamp, LinkID, ObjectLinkID, SeatID) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.SpawnVehicleWithDriver,
+            Parameters: {
+                // 72 = WorldObjectIDs dict: 0=driver, 1=spawner, 2=vehicle
+                "72": new Dictionary([
+                    { Key: new Byte(0), Value: new Int(DriverWorldObjectID) },
+                    { Key: new Byte(1), Value: new Int(SpawnerWorldObjectID) },
+                    { Key: new Byte(3), Value: new Int(VehicleWorldObjectID) },
+                ]),
+                "254": new Int(ActorNr),
+                "35": new Int(Timestamp),
+                "58": new Int(LinkID),
+                "92": new Int(ObjectLinkID),
+                "141": new Byte(SeatID),
+            },
+        }
+    }));
+}
+export function DetachWorldObjectFromVehicle(Socket, WorldObjectID) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.DetachWorldObjectFromVehicle,
+            Parameters: {
+                "22": new Int(WorldObjectID),
+            },
+        }
+    }));
+}
+export function AttachWorldObjectToSeat(Socket, ActorNr, VehicleWorldObjectID, DriverWorldObjectID, SeatID) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.AttachWorldObjectToSeat,
+            Parameters: {
+                "72": new Dictionary([
+                    { Key: new Byte(0), Value: new Int(DriverWorldObjectID) },
+                    { Key: new Byte(4), Value: new Int(VehicleWorldObjectID) },
+                ]),
+                "254": new Int(ActorNr),
+                "141": new Byte(SeatID),
+            },
+        }
+    }));
+}
+export function SpawnVehicleWithDriverOpRes(Socket) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "OperationResponse",
+        Data: {
+            DebugMessage: new Null(),
+            ReturnCode: 0,
+            OperationCode: MVOperationCodes.SpawnVehicleWithDriver,
+            Parameters: {},
+        }
+    }));
+}
+
+export function DetachWorldObjectFromVehicleOpRes(Socket) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "OperationResponse",
+        Data: {
+            DebugMessage: new Null(),
+            ReturnCode: 0,
+            OperationCode: MVOperationCodes.DetachWorldObjectFromVehicle,
+            Parameters: {},
+        }
+    }));
+}
+
+export function AttachWorldObjectToSeatOpRes(Socket) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "OperationResponse",
+        Data: {
+            DebugMessage: new Null(),
+            ReturnCode: 0,
+            OperationCode: MVOperationCodes.AttachWorldObjectToSeat,
+            Parameters: {},
+        }
+    }));
+}
+
+export function CreateSpawnRoleOpRes(Socket) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "OperationResponse",
+        Data: {
+            DebugMessage: new Null(),
+            ReturnCode: 0,
+            OperationCode: MVOperationCodes.CreateSpawnRole,
+            Parameters: {},
+        }
+    }));
+}
+
+export function UnregisterWorldObject(Socket, WorldObjectID) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.UnregisterWorldObject,
+            Parameters: {
+                "22": new Int(WorldObjectID),
+            },
+        }
+    }));
+}
+
+export function CollectTheItemDropOff(id, id2) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.CollectTheItemDropOff,
+            Parameters: {
+                "72": new TArray([new Int(id), new Int(id2)], 105),
+            },
+        }
+    }));
+}
+export function TriggerBoxExit(Socket, WorldObjectID, ActorNr) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.TriggerBoxExit,
+            Parameters: {
+                "254": new Int(ActorNr),
+                "22": new Int(WorldObjectID),
+            },
+        }
+    }));
+}
+export function TriggerBoxEnter(Socket, WorldObjectID, ActorNr) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.TriggerBoxEnter,
+            Parameters: {
+                "254": new Int(ActorNr),
+                "22": new Int(WorldObjectID),
+            },
+        }
+    }));
+}
+
+export function TriggerBoxStayBegin(Socket, WorldObjectID, ActorNr) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.TriggerBoxStayBegin,
+            Parameters: {
+                "254": new Int(ActorNr),
+                "22": new Int(WorldObjectID),
+            },
+        }
+    }));
+}
+
+export function TriggerBoxStayEnd(Socket, WorldObjectID) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.TriggerBoxStayEnd,
+            Parameters: {
+                "22": new Int(WorldObjectID),
+            },
+        }
+    }));
+}
+
+
+export function CloneWorldObjectTree(Socket, OwnerActorNr, originalId, cloneId, LinkID, ObjectLinkID, CloneToRootGroup, PreviewProfileOwnerID) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.CloneWorldObjectTree,
+            Parameters: {
+                72: new TArray([
+                    new Int(originalId),
+                    new Int(cloneId),
+                ], 105),
+                20: new Int(OwnerActorNr),
+                58: new Int(LinkID),
+                92: new Int(ObjectLinkID),
+                101: new Bool(CloneToRootGroup),
+                128: new Int(PreviewProfileOwnerID),
+            },
+        }
+    }));
+}
+
+
+export function SetSpawnRoleBody(Socket, Data) {
+    Socket.send(Serialize({
+        MagicNumber,
+        EgMessageType: "Event",
+        Data: {
+            Code: MVEventCodes.SetSpawnRoleBody,
+            Parameters: {
+                245: new String(JSON.stringify(Data))
             },
         }
     }));
