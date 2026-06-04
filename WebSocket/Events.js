@@ -15,7 +15,7 @@ export function Join(Socket, ActorNr, TeamID, UserProfileData) {
         16: new Byte(4), //Region
         82: new Bool(1), //IsGamePublished
         89: new Int(TeamID), //TeamID
-        104: new String(window.location.href.includes("github") ? ("https://media.githubusercontent.com/media/Zpayer/KMP/main/") : window.location.href + "WebSocket/Assets/"),
+        104: new String((window.location.href.includes("github") ? "https://media.githubusercontent.com/media/Zpayer/KMP/main/" : window.location.href) + "WebSocket/Assets/"),
         168: new Int(-12572), //ClientSettingFlags
         170: new Int(0), //GameType
         174: new String(window.location.href), //APIUrl
