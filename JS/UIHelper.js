@@ -146,6 +146,9 @@ function AddSelect(parent, text, options, index, onchange, style) {
 
 }
 
+
+
+
 function AddButton() {
     return createElement(parent, "button");
 }
@@ -184,6 +187,50 @@ function AddTextInput(parent, text, value, onchange, style) {
 
 }
 
+function AddFileInput(parent, text, accept, onchange, style) {
+
+    return AddSection(parent, style, [
+        createElement(null, "div", {
+            text,
+            style: {
+                fontFamily: '"Open Sans", sans-serif',
+                marginLeft: '10px',
+            }
+        }),
+        createElement(null, "button", {
+            text: "Select File",
+            event_click: (e) => {
+                createElement(null, "input", {
+                    type: "file",
+                    accept,
+                    event_change: (e, ev) => {
+                        e.remove();
+                        onchange(e.files)
+                    }
+                }).click();
+            },
+            class: "transition",
+            style: {
+                display: 'flex',
+                gap: '10px',
+                marginRight: '10px',
+                background: 'transparent',
+                color: 'currentcolor',
+                fontFamily: '"Open Sans", sans-serif',
+                border: '1px solid',
+                padding: '1px',
+                height: '20px',
+                boxSizing: 'content-box',
+                borderRadius: '3px',
+                outline: 'none',
+                padding: '0 10px',
+                cursor: 'pointer'
+            },
+        }, [])
+    ]);
+
+}
+
 
 
 
@@ -194,5 +241,6 @@ window.UIHelper = {
     AddSelect,
     AddButton,
     AddTextInput,
+    AddFileInput,
     svgs
 }

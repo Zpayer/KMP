@@ -1,5 +1,5 @@
 import { getWorldInventoryData } from "./BytePacker.js";
-import Avatar0 from "./Avatars/Avatar-1.js";
+import Avatar0 from "./DefaultAvatar.js";
 import log from "../JS/Log.js";
 
 class GameSnapShotHelper {
@@ -103,18 +103,18 @@ class GameSnapShotHelper {
     };
   }
 
-  GetLinks (worldObjectId) {
+  GetLinks(worldObjectId) {
     [
-      this.Links.filter(l=>l.LinkToID === worldObjectId),
-      this.Links.filter(l=>l.LinkFromID === worldObjectId)
+      this.Links.filter(l => l.LinkToID === worldObjectId),
+      this.Links.filter(l => l.LinkFromID === worldObjectId)
     ]
 
   }
 
-  GetObjectLink (worldObjectId) {
+  GetObjectLink(worldObjectId) {
     [
-      this.ObjectLinks.filter(l=>l.LinkToID === worldObjectId),
-      this.ObjectLinks.filter(l=>l.LinkFromID === worldObjectId)
+      this.ObjectLinks.filter(l => l.LinkToID === worldObjectId),
+      this.ObjectLinks.filter(l => l.LinkFromID === worldObjectId)
     ]
   }
   GetNextPrototypeId() {
@@ -311,8 +311,8 @@ class GameSnapShotHelper {
     });
   }
 
-  AddAvatar(OwnerActorNumber, Id = 0, gameMode = 1) {
-    const { Prototypes: RawPrototypes, WorldObjects: RawWorldObjects } = structuredClone(Avatar0);
+  AddAvatar(OwnerActorNumber, Avatar, gameMode = 1) {
+    const { Prototypes: RawPrototypes, WorldObjects: RawWorldObjects } = structuredClone(Avatar ?? Avatar0);
 
     const PlayModeAvatar = gameMode === 1 ? this.PlayModeAvatarData() : this.BuildModeAvatarData();
     PlayModeAvatar.Id = this.GetNextWorldObjectId();
@@ -453,15 +453,15 @@ class GameSnapShotHelper {
     const clonedLinks = [];
     for (const link of this.Links) {
       const fromInside = sourceIds.has(link.LinkFromID);
-      const toInside   = sourceIds.has(link.LinkToID);
+      const toInside = sourceIds.has(link.LinkToID);
 
       if (!fromInside && !toInside) continue; // unrelated
       if ((!fromInside || !toInside) && !this.CloneLinksToOusideGroup) continue; // crosses boundary, opt-out
 
       const newLink = {
-        Id:         (this.LinksNextId ?? 0) + clonedLinks.length,
+        Id: (this.LinksNextId ?? 0) + clonedLinks.length,
         LinkFromID: idMap.get(link.LinkFromID) ?? link.LinkFromID,
-        LinkToID:   idMap.get(link.LinkToID)   ?? link.LinkToID,
+        LinkToID: idMap.get(link.LinkToID) ?? link.LinkToID,
       };
       clonedLinks.push(newLink);
     }
@@ -473,15 +473,15 @@ class GameSnapShotHelper {
     const clonedObjectLinks = [];
     for (const link of this.ObjectLinks) {
       const fromInside = sourceIds.has(link.LinkFromID);
-      const toInside   = sourceIds.has(link.LinkToID);
+      const toInside = sourceIds.has(link.LinkToID);
 
       if (!fromInside && !toInside) continue;
       if ((!fromInside || !toInside) && !this.CloneObjectLinksToOusideGroup) continue;
 
       const newLink = {
-        Id:         (this.ObjectLinksNextId ?? 0) + clonedObjectLinks.length,
+        Id: (this.ObjectLinksNextId ?? 0) + clonedObjectLinks.length,
         LinkFromID: idMap.get(link.LinkFromID) ?? link.LinkFromID,
-        LinkToID:   idMap.get(link.LinkToID)   ?? link.LinkToID,
+        LinkToID: idMap.get(link.LinkToID) ?? link.LinkToID,
       };
       clonedObjectLinks.push(newLink);
     }
@@ -498,10 +498,10 @@ class GameSnapShotHelper {
     log.debug("Clone", `Cloned ${clonedObjects.length} objects, ${clonedPrototypes.length} prototypes, ${clonedLinks.length} links — root: ${sourceId} → ${cloneRoot.Id}`);
 
     return {
-      root:        cloneRoot,
+      root: cloneRoot,
       worldObjects: clonedObjects,
-      prototypes:  clonedPrototypes,
-      links:       clonedLinks,
+      prototypes: clonedPrototypes,
+      links: clonedLinks,
       objectLinks: clonedObjectLinks,
     };
   }

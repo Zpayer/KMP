@@ -689,6 +689,27 @@ document.addEventListener("DOMContentLoaded", () => {
             ServerSettings.UserName = e;
             window.localStorage.setItem("ServerSettings", JSON.stringify(ServerSettings));
         }),
+        UIHelper.AddFileInput(0, "Avatar File", ".kgm, .kgmap", (e) => {
+            const file = e[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                const buffer = e.target.result;
+                const bytes = new Uint8Array(buffer);
+                const fileExtension = getFileExtension(file.name);
+                console.log("File extension: ", fileExtension);
+                if (fileExtension === "kgm") {
+                    ServerSettings.Avatar = await window.WorldHandler.DecodeWorld(bytes);
+                } else if (fileExtension === "kgmap") {
+                    const decompressedBytes = pako.ungzip(bytes);
+                    let converted = window.WorldHandler.RemapKgmapFile(decompressedBytes);
+                    ServerSettings.Avatar = await window.WorldHandler.DecodeWorld(converted);
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }),
         UIHelper.createElement(0, "div", {
             text: "PLAY", class: "btn",
             event_click: async () => {

@@ -122,6 +122,7 @@ export class OperationHandler {
         this.Data = { ActorNr };
         this.GameSnapShotManager = new GameSnapShotHelper(window.World);
         this.RoundManager = new RoundManager();
+
         this.Settings = window.ServerSettings;
         window.GameSnapShotManager = this.GameSnapShotManager;
     }
@@ -597,9 +598,9 @@ export class OperationHandler {
 
         // tried to make build mode work but client too spoiled
         if (this.GameMode === 0) {
-            spawnRoleAvatars.push(this.GameSnapShotManager.AddAvatar(this.ActorNr, 0, this.GameMode)[0]);
+            spawnRoleAvatars.push(this.GameSnapShotManager.AddAvatar(this.ActorNr, this.Settings.Avatar, this.GameMode)[0]);
         }
-        spawnRoleAvatars.push(this.GameSnapShotManager.AddAvatar(this.ActorNr, 0, 1)[0]);
+        spawnRoleAvatars.push(this.GameSnapShotManager.AddAvatar(this.ActorNr, this.Settings.Avatar, 1)[0]);
 
 
         console.log(spawnRoleAvatars, spawnRoleAvatars[0].Id, spawnRoleAvatars.map(l => l.Id))
