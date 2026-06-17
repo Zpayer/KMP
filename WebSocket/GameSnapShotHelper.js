@@ -326,6 +326,8 @@ class GameSnapShotHelper {
     if (!Blueprint) {
       log.error("AddAvatar", "Blueprint (WorldObjectTypeId 45) not found in avatar data");
     }
+    Blueprint.Position = { X: 0, Y: 0, Z: 0 };
+    Blueprint.Rotation = { X: 0, Y: 0, Z: 0, W: 1 };
     Blueprint.GroupId = PlayModeAvatar.Id;
     Blueprint.OwnerActorNumber = OwnerActorNumber;
 
